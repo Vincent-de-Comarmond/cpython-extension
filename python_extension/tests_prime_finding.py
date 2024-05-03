@@ -16,16 +16,19 @@ def noarg_func():
 
 @timeit
 def arg_func(a, b):
+    """Silly testing function"""
     return a + b
 
 
 @timeit
 def kwarg_func(c=1, d=2):
+    """Silly testing function"""
     return c + d
 
 
 @timeit
 def generic_func(a, b, c=3, d=4):
+    """Silly testing function"""
     return a + b + c + d
 
 
@@ -69,7 +72,7 @@ class TestTimeit(unittest.TestCase):
             self.assertIn(f"{arg_func.__name__}(1, 2) execution time", captured_print)
 
     def test_kwarg_func1(self):
-        """Tests that the timer acts as expected for a function with positional arguments."""
+        """Tests that the timer acts as expected for a function with keyword arguments."""
         virtual_file = StringIO()
         with redirect_stdout(virtual_file):
             return_val = kwarg_func()
@@ -86,7 +89,7 @@ class TestTimeit(unittest.TestCase):
             self.assertIn(f"{kwarg_func.__name__}() execution time", captured_print)
 
     def test_kwarg_func2(self):
-        """Tests that the timer acts as expected for a function with positional arguments."""
+        """Tests that the timer acts as expected for a function with keyword arguments."""
         _kwargs = {"c": 3, "d": 4}
         virtual_file = StringIO()
         with redirect_stdout(virtual_file):
@@ -106,7 +109,7 @@ class TestTimeit(unittest.TestCase):
             )
 
     def test_generic_func(self):
-        """Tests that the timer acts as expected for a function with positional arguments."""
+        """Tests that the timer acts as expected for a function with any arguments."""
 
         virtual_file = StringIO()
         with redirect_stdout(virtual_file):
