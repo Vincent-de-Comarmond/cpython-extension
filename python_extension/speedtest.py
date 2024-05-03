@@ -6,7 +6,6 @@ from typing import Any, Callable, List
 # C extension to the python language
 from c_primefinder import find_primes
 
-
 def timeit(func: Callable) -> Callable[[Callable], Callable]:
     """
     A decorator which times how long a function takes to execute
@@ -28,7 +27,7 @@ def timeit(func: Callable) -> Callable[[Callable], Callable]:
         _args += ", " if len(kwargs) > 0 and len(args) > 0 else ""
         _kwargs: str = ", ".join(f"{k}={v}" for k, v in kwargs.items())
 
-        print(f"{_name}({_args}{_kwargs}) exection time {toc-tic:4f}")
+        print(f"{_name}({_args}{_kwargs}) execution time {toc-tic:4f}")
         return result
 
     return modified_function
