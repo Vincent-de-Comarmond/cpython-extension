@@ -4,7 +4,7 @@ from io import StringIO
 import unittest
 
 # Custom
-from speedtest import timeit
+from speedtest import timeit, generate_primes
 from c_primefinder import find_primes
 
 
@@ -128,6 +128,27 @@ class TestTimeit(unittest.TestCase):
                 f"{generic_func.__name__}(1, 2, c=3, d=4) execution time",
                 captured_print,
             )
+
+
+class TestPrimeNumbers(unittest.TestCase):
+    """
+    Test that we're finding prime numbers and not some other junk
+    """
+
+    PRIMES = (2, 3, 5, 7, 11, 13, 17, 19, 23, 29)
+
+    def test_python_function(self):
+        """Test to see that the python implementation gives us the correct result"""
+        # Here we use __wrapped__ to get to the inner, function which has been
+        # wrapped by the decorator, because we don't actually care to check or print out
+        # the execution time
+        python_result = generate_primes.__wrapped__(len(TestPrimeNumbers.PRIMES))
+        self.assertEqual(tuple(python_result), TestPrimeNumbers.PRIMES)
+
+    def test_cpython_function(self):
+        """Test to see that the c implementation gives us the correct result"""
+        c_based_result = find_primes(len(TestPrimeNumbers.PRIMES))
+        self.assertEqual(tuple(c_based_result), TestPrimeNumbers.PRIMES)
 
 
 if __name__ == "__main__":
