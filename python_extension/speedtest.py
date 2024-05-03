@@ -1,10 +1,12 @@
 # The normal stuff
 from functools import wraps
 from time import perf_counter
+from sys import argv
 from typing import Any, Callable, List
 
-# C extension to the python language
+# Our C extension to the python language
 from c_primefinder import find_primes
+
 
 def timeit(func: Callable) -> Callable[[Callable], Callable]:
     """
@@ -33,30 +35,57 @@ def timeit(func: Callable) -> Callable[[Callable], Callable]:
     return modified_function
 
 
+def generate_primes_c_copy(desired_primes: int, prime_numbers: List[int]) -> None:
+    """
+    Generate the prime numbers. Use the same (as close) algorithm as in c to make the test fair.
+    The code looks quite weird (un-idomatic) in python
+
+    :param desired_primes: How many primes should be generated
+    :type desired_primes: int
+    :param prime_numbers: In place list in which to store the generated prime numbers
+    :type prime_numbers: List[int]
+    """
+    current_prime, current_value = 2, 3
+    prime_numbers[0] = 2
+    prime_numbers[1] = 3
+
+    while current_prime < desired_primes:
+        is_prime = True
+        current_value += 1
+
+        for i in range(current_prime):  # Maybe cheating?
+            if current_value % prime_numbers[i] == 0:
+                is_prime = False
+                break
+
+        if is_prime:
+            prime_numbers[current_prime] = current_value
+            current_prime += 1
+
+
+@timeit
+def generate_primes(desired_primes: int) -> List[int]:
+    """
+    Silly wrapper function for the above
+
+    :param desired_primes: Desired number of primes
+    :type desired_primes: int
+    :return: List containing prime numbers
+    :rtype: List[int]
+    """
+    result_holder: List[int] = [None] * desired_primes
+    generate_primes_c_copy(desired_primes, result_holder)
+    return result_holder
+
+
 if __name__ == "__main__":
-    cfunction: List[int] = timeit(find_primes)(50000)
+    if len(argv) != 2:
+        raise IOError(
+            "Incorrect number of arguments. "
+            "Please enter the number of desired primes"
+        )
 
+    DESIRED_NUM_PRIMES = int(argv[1])
 
-########################################################
-# For testing that the timer does what I want it to do #
-########################################################
-
-
-@timeit
-def simplefunc():
-    return 1
-
-
-@timeit
-def func_with_args(a, b):
-    return a + b
-
-
-@timeit
-def func_with_kwargs(c=1, d=2):
-    return c + d
-
-
-@timeit
-def func_with_args_and_kwargs(a, b, c=1, d=2):
-    return a + b + c + d
+    cfunction_result: List[int] = timeit(find_primes)(DESIRED_NUM_PRIMES)
+    pythonfunc_result: List[int] = generate_primes(DESIRED_NUM_PRIMES)
