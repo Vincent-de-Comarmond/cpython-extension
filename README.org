@@ -122,6 +122,12 @@ This is where things get ... ugly. This is the "glue" that glues the simple C co
 
 * The Python code
 
+** Installing the C extension in Python
+
++ ~pip install .~: Install our c-extension
++ You will probably need a c compiler on your system. GNU/Linux is built with C ... so this was not a problem for me. For windows you might (*maybe*) have to install [[https://visualstudio.microsoft.com/vs/features/cplusplus/][Microsoft's C/C++ tools]]. I'm not sure about Mac.
+
+
 ** setup.py
 
 This is the Python half of the glue sticking together Python and C. This allows us to install the C module as a Python module and use the C function/s as if they were Python (I'm simplifying a bit, but anyways).
@@ -177,8 +183,8 @@ To run the unit-tests one can use either:
   python tests_prime_finding.py # Only if unittest.main() is included in the script
 #+END_SRC
 
+** speedtest.py
 
-** Installing the C extension in Python
+Things are finally coming to a head. We are going to test if our c-based library (together with all the glue of moving things between C and Python) is faster than the same algorithm in Python.
 
-+ ~pip install .~: Install our c-extension
-+ You will probably need a c compiler on your system. GNU/Linux is built with C ... so this was not a problem for me. For windows you might (*maybe*) have to install [[https://visualstudio.microsoft.com/vs/features/cplusplus/][Microsoft's C/C++ tools]]. I'm not sure about Mac.
+
