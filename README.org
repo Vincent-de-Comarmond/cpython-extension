@@ -29,13 +29,19 @@ Rejected export themes
 #+END_COMMENT
 
 
-*DISCLAIMER:*
+** DISCLAIMER:
 I am not an expert in any of the following Not at all. So ... whatever you see below might be (and probably is) very badly done. The algorithms are definitely not very efficient and the way everything is glued together is probably sub-optimal or plain bad.
 
 The project can be cloned from here:
 + ~git clone https://github.com/Vincent-de-Comarmond/cpython-extension.git~
 + ~git clone git@github.com:Vincent-de-Comarmond/cpython-extension.git~
 + https://github.com/Vincent-de-Comarmond/cpython-extension
+
+** Key resources:
+
++ [[http://saidvandeklundert.net/learn/2022-06-02-extending-python-with-c/][Extending Python with C]]
++ [[https://realpython.com/build-python-c-extension-module/][Building a Python C Extension Module]]
++ [[https://docs.python.org/3/extending/extending.html][Extending Python with C or C++]]
 
 * Preamble: WTF is CPython
 
@@ -66,7 +72,7 @@ So ... let us try to make a C-extension to Python. Let's do something computatio
 │   ├── primefinderfunc.c
 │   ├── primefinderfunc.h
 │   └── primefindermain.c
-├── python_extension
+├── python_extension     # This is the working directory
 │   ├── primefinder.c
 │   ├── primefinderfunc.c
 │   ├── primefinderfunc.h
@@ -81,4 +87,30 @@ Feel free to ignore the ~pure_c~ directory. This is where I tested my algorithm 
 
 * The C code
 
-Note again -  I am not an expert in this. So this stuff is ... very sketchy at best. 
+Note again -  I am not an expert in this. So this stuff is ... very sketchy at best. I've tried to comment/document the code to make it as understandable as possible. Please read the comments for direction.
+
+** ~python_extension/primefinderfunc.c~
+
+This contains the function which computes primes. Note the statement ~#include <stdbool.h>~ - this is how one does imports in C. Note that the function ~generatePrimes~ does not return anything, but populates the array given to it. This is because one can't really return an array from a function in C (this is a bit of a complicated question).
+
+The code here is pretty simple.
+
+** ~python_extension/primefinderfunc.h~
+
+This is how we make things exportable in C. There is nearly nothing here except the function stub ~void generatePrimes(int, long[]);~. The C pre-processor finds the function body (defined above in ~python_extension/primefinderfunc.c~) based on the function signature of this stub and copies the function to wherever one writes ~#include "primefinderfunc.h"~, thereby making it visible in other scripts.
+
+Note also the code:
+#+BEGIN_SRC C
+  #ifndef PRIMEFINDERFUNC_H
+  #define PRIMEFINDERFUNC_H
+  // ...
+  #endif
+#+END_SRC
+
+This simply prevents the code in the header (~.h~ file) from being read multiple times (in a more complicated project) which would cause an error.
+
+
+* Installing
+
++ ~pip install -r requirements.txt~: Install setuptools ... this is needed to install the c-exension
++ ~pip install .~: Install our c-extension
