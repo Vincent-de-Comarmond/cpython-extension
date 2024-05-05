@@ -7,7 +7,11 @@
 *DISCLAIMER:*
 I am not an expert in any of the following Not at all. So ... whatever you see below might be (and probably is) very badly done. The algorithms are definitely not very efficient and the way everything is glued together is probably sub-optimal or plain bad.
 
-
+The project can be cloned from here
+~git clone https://github.com/Vincent-de-Comarmond/cpython-extension.git~
+or
+~git clone git@github.com:Vincent-de-Comarmond/cpython-extension.git~
+or https://github.com/Vincent-de-Comarmond/cpython-extension
 
 * Preamble: WTF is CPython
 
