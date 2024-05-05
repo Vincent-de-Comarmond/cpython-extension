@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2024-05-05 Sun 21:48 -->
+<!-- 2024-05-05 Sun 22:14 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>CPython</title>
@@ -222,37 +222,39 @@ $(function() {    $('.note').before("<p class='admonition-title note'>Note</p>")
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org5d80ed9">0.1. DISCLAIMER:</a></li>
-<li><a href="#org4fdb709">0.2. Key resources:</a></li>
+<li><a href="#org7f87cdf">0.1. DISCLAIMER:</a></li>
+<li><a href="#orgad267c8">0.2. Key resources:</a></li>
 </ul>
 </li>
-<li><a href="#org48d16c2">1. Preamble: WTF is CPython</a>
+<li><a href="#orgc5c09d3">1. Preamble: WTF is CPython</a>
 <ul>
-<li><a href="#orgc0fd110">1.1. So &#x2026; like how is this useful?</a></li>
+<li><a href="#orgf44482c">1.1. So &#x2026; like how is this useful?</a></li>
 </ul>
 </li>
-<li><a href="#org67c2e90">2. The project: Make a C-based library to extend Python</a>
+<li><a href="#org984b950">2. The project: Make a C-based library to extend Python</a>
 <ul>
-<li><a href="#org718b4ab">2.1. What the project looks like:</a></li>
+<li><a href="#org32e93f6">2.1. What the project looks like:</a></li>
 </ul>
 </li>
-<li><a href="#orga4f97b1">3. The C code</a>
+<li><a href="#org04d7e31">3. The C code</a>
 <ul>
-<li><a href="#orgd0c54cd">3.1. python_extension/primefinderfunc.c</a></li>
-<li><a href="#org3763cc9">3.2. python_extension/primefinderfunc.h</a></li>
-<li><a href="#orgfb25063">3.3. python_extension/primefinder.c</a></li>
+<li><a href="#org2d6c2fe">3.1. primefinderfunc.c</a></li>
+<li><a href="#orgcc015f4">3.2. primefinderfunc.h</a></li>
+<li><a href="#orge131db2">3.3. primefinder.c</a></li>
 </ul>
 </li>
-<li><a href="#org224bf68">4. The Python code</a>
+<li><a href="#org878e78c">4. The Python code</a>
 <ul>
-<li><a href="#org1d867b0">4.1. Installing the C extension in Python</a></li>
+<li><a href="#org086f6a7">4.1. setup.py</a></li>
+<li><a href="#orgf38c882">4.2. tests_prime_finding.py</a></li>
+<li><a href="#orga56139f">4.3. Installing the C extension in Python</a></li>
 </ul>
 </div>
 </div>
 
 
-<div id="outline-container-org5d80ed9" class="outline-3">
-<h3 id="org5d80ed9"><span class="section-number-3">0.1.</span> DISCLAIMER:</h3>
+<div id="outline-container-org7f87cdf" class="outline-3">
+<h3 id="org7f87cdf"><span class="section-number-3">0.1.</span> DISCLAIMER:</h3>
 <div class="outline-text-3" id="text-0-1">
 <p>
 I am not an expert in any of the following Not at all. So &#x2026; whatever you see below might be (and probably is) very badly done. The algorithms are definitely not very efficient and the way everything is glued together is probably sub-optimal or plain bad.<br />
@@ -269,8 +271,8 @@ The project can be cloned from here:<br />
 </div>
 </div>
 
-<div id="outline-container-org4fdb709" class="outline-3">
-<h3 id="org4fdb709"><span class="section-number-3">0.2.</span> Key resources:</h3>
+<div id="outline-container-orgad267c8" class="outline-3">
+<h3 id="orgad267c8"><span class="section-number-3">0.2.</span> Key resources:</h3>
 <div class="outline-text-3" id="text-0-2">
 <ul class="org-ul">
 <li><a href="http://saidvandeklundert.net/learn/2022-06-02-extending-python-with-c/">Extending Python with C</a><br /></li>
@@ -280,8 +282,8 @@ The project can be cloned from here:<br />
 </div>
 </div>
 
-<div id="outline-container-org48d16c2" class="outline-2">
-<h2 id="org48d16c2"><span class="section-number-2">1.</span> Preamble: WTF is CPython</h2>
+<div id="outline-container-orgc5c09d3" class="outline-2">
+<h2 id="orgc5c09d3"><span class="section-number-2">1.</span> Preamble: WTF is CPython</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 What you know as Python is actually <a href="https://github.com/python/cpython">CPython</a>. It is the <a href="https://en.wikipedia.org/wiki/CPython">reference/standard implementation</a> of the Python programming language and the most common (by far). <a href="https://www.python.org/download/alternatives/">Other implementations</a> do exist and are used in various contexts. So the long of the short of this is that Python/CPython (I won't differentiate between the two anymore) is actually an interpreted language written in C. I.e. it is something like translator/interpreter of a string/text-file written in <a href="https://www.cprogramming.com/">C</a>.<br />
@@ -293,8 +295,8 @@ Let's think about why this is. An interpreted language (i.e. one that's not comp
 </div>
 
 
-<div id="outline-container-orgc0fd110" class="outline-3">
-<h3 id="orgc0fd110"><span class="section-number-3">1.1.</span> So &#x2026; like how is this useful?</h3>
+<div id="outline-container-orgf44482c" class="outline-3">
+<h3 id="orgf44482c"><span class="section-number-3">1.1.</span> So &#x2026; like how is this useful?</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 Have you ever wondered how <a href="https://numpy.org/">Numpy</a> (for example) is so fast compared to pure python? Or why anybody would choose <a href="https://pandas.pydata.org/">Pandas'</a> very non-pythonic syntax? The reason Pandas is useful is because it's faster than "normal Python" one you're working with more than a trivial amount of data.<br />
@@ -314,18 +316,18 @@ The reason both of these libraries are "faster" than writing things by hand in P
 </div>
 </div>
 
-<div id="outline-container-org67c2e90" class="outline-2">
-<h2 id="org67c2e90"><span class="section-number-2">2.</span> The project: Make a C-based library to extend Python</h2>
+<div id="outline-container-org984b950" class="outline-2">
+<h2 id="org984b950"><span class="section-number-2">2.</span> The project: Make a C-based library to extend Python</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 So &#x2026; let us try to make a C-extension to Python. Let's do something computationally-intensive (like finding prime numbers).<br />
 </p>
 </div>
 
-<div id="outline-container-org718b4ab" class="outline-3">
-<h3 id="org718b4ab"><span class="section-number-3">2.1.</span> What the project looks like:</h3>
+<div id="outline-container-org32e93f6" class="outline-3">
+<h3 id="org32e93f6"><span class="section-number-3">2.1.</span> What the project looks like:</h3>
 <div class="outline-text-3" id="text-2-1">
-<pre class="example" id="org1d8623d">
+<pre class="example" id="orgaed89fc">
 .
 ├── LICENSE
 ├── pure_c
@@ -350,16 +352,16 @@ Feel free to ignore the <code>pure_c</code> directory. This is where I tested my
 </div>
 
 
-<div id="outline-container-orga4f97b1" class="outline-2">
-<h2 id="orga4f97b1"><span class="section-number-2">3.</span> The C code</h2>
+<div id="outline-container-org04d7e31" class="outline-2">
+<h2 id="org04d7e31"><span class="section-number-2">3.</span> The C code</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 Note again -  I am not an expert in this. So this stuff is &#x2026; very sketchy at best. I've tried to comment/document the code to make it as understandable as possible. Please read the comments for direction.<br />
 </p>
 </div>
 
-<div id="outline-container-orgd0c54cd" class="outline-3">
-<h3 id="orgd0c54cd"><span class="section-number-3">3.1.</span> python_extension/primefinderfunc.c</h3>
+<div id="outline-container-org2d6c2fe" class="outline-3">
+<h3 id="org2d6c2fe"><span class="section-number-3">3.1.</span> primefinderfunc.c</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 This contains the function which computes primes. Note the statement <code>#include &lt;stdbool.h&gt;</code> - this is how one does imports in C. Note that the function <code>generatePrimes</code> does not return anything, but populates the array given to it. This is because one can't really return an array from a function in C (this is a bit of a complicated question).<br />
@@ -371,11 +373,11 @@ The code here is pretty simple.<br />
 </div>
 </div>
 
-<div id="outline-container-org3763cc9" class="outline-3">
-<h3 id="org3763cc9"><span class="section-number-3">3.2.</span> python_extension/primefinderfunc.h</h3>
+<div id="outline-container-orgcc015f4" class="outline-3">
+<h3 id="orgcc015f4"><span class="section-number-3">3.2.</span> primefinderfunc.h</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
-This is how we make things exportable in C. There is nearly nothing here except the function stub <code>void generatePrimes(int, long[]);</code>. The C pre-processor finds the function body (defined above in <code>python_extension/primefinderfunc.c</code>) based on the function signature of this stub and copies the function to wherever one writes <code>#include "primefinderfunc.h"</code>, thereby making it visible in other scripts.<br />
+This is how we make things exportable in C. There is nearly nothing here except the function stub <code>void generatePrimes(int, long[]);</code>. The C pre-processor finds the function body (defined above in <code>primefinderfunc.c</code>) based on the function signature of this stub and copies the function to wherever one writes <code>#include "primefinderfunc.h"</code>, thereby making it visible in other scripts.<br />
 </p>
 
 <p>
@@ -395,16 +397,16 @@ This simply prevents the code in the header (<code>.h</code> file) from being re
 </div>
 </div>
 
-<div id="outline-container-orgfb25063" class="outline-3">
-<h3 id="orgfb25063"><span class="section-number-3">3.3.</span> python_extension/primefinder.c</h3>
+<div id="outline-container-orge131db2" class="outline-3">
+<h3 id="orge131db2"><span class="section-number-3">3.3.</span> primefinder.c</h3>
 <div class="outline-text-3" id="text-3-3">
 <p>
 This is where things get &#x2026; ugly. This is the "glue" that glues the simple C code to Python. Again, I have gone out-of-my-way to try to comment the code to make it understandable. I do not understand everything that is happening here, but I try to explain what I can.<br />
 </p>
 </div>
 
-<div id="outline-container-org1e73960" class="outline-4">
-<h4 id="org1e73960"><span class="section-number-4">3.3.1.</span> Beware of the following.</h4>
+<div id="outline-container-org3dae9a4" class="outline-4">
+<h4 id="org3dae9a4"><span class="section-number-4">3.3.1.</span> Beware of the following.</h4>
 <div class="outline-text-4" id="text-3-3-1">
 <p>
 <code>#include &lt;python3.12/Python.h&gt; // BEWARE - this may vary on your system</code><br />
@@ -419,19 +421,97 @@ This is where things get &#x2026; ugly. This is the "glue" that glues the simple
 </div>
 
 
-
-
-
-<div id="outline-container-org224bf68" class="outline-2">
-<h2 id="org224bf68"><span class="section-number-2">4.</span> The Python code</h2>
+<div id="outline-container-org878e78c" class="outline-2">
+<h2 id="org878e78c"><span class="section-number-2">4.</span> The Python code</h2>
 <div class="outline-text-2" id="text-4">
 </div>
-<div id="outline-container-org1d867b0" class="outline-3">
-<h3 id="org1d867b0"><span class="section-number-3">4.1.</span> Installing the C extension in Python</h3>
+<div id="outline-container-org086f6a7" class="outline-3">
+<h3 id="org086f6a7"><span class="section-number-3">4.1.</span> setup.py</h3>
 <div class="outline-text-3" id="text-4-1">
+<p>
+This is the Python half of the glue sticking together Python and C. This allows us to install the C module as a Python module and use the C function/s as if they were Python (I'm simplifying a bit, but anyways).<br />
+</p>
+
+<p>
+What the code does is pretty self-explanatory. Essentially it all boils down to "install this C module as a Python module."<br />
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf38c882" class="outline-3">
+<h3 id="orgf38c882"><span class="section-number-3">4.2.</span> tests_prime_finding.py</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+This, more than anything, is just a demonstration of unit-testing with some interesting things thrown in.<br />
+</p>
+
+<p>
+Let's quickly glance at some interesting stuff<br />
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #EF2F27;">from</span> contextlib <span style="color: #EF2F27;">import</span> redirect_stdout
+<span style="color: #EF2F27;">from</span> io <span style="color: #EF2F27;">import</span> StringIO
+
+<span style="color: #EF2F27;">import</span> unittest
+
+<span style="color: #918175; font-style: italic;"># </span><span style="color: #918175; font-style: italic;">Custom</span>
+<span style="color: #EF2F27;">from</span> speedtest <span style="color: #EF2F27;">import</span> timeit, generate_primes
+<span style="color: #EF2F27;">from</span> c_primefinder <span style="color: #EF2F27;">import</span> find_primes
+
+
+<span style="color: #68A8E4;">@timeit</span>
+<span style="color: #EF2F27;">def</span> <span style="color: #FBB829;">noarg_func</span><span style="color: #ff8c00;">()</span>:
+<span style="background-color: #918175;"> </span>   <span style="color: #519F50;">"""Silly testing function"""</span>
+<span style="background-color: #918175;"> </span>   <span style="color: #EF2F27;">return</span> 1
+...
+</pre>
+</div>
+
+<p>
+<b>NOTES/Things of Interest:</b><br />
+</p>
+
 <ul class="org-ul">
-<li><code>pip install -r requirements.txt</code>: Install setuptools &#x2026; this is needed to install the c-exension<br /></li>
+<li><code>from contextlib import redirect_stdout</code>: This allows us to capture outputs for print statements and write them elsewhere<br /></li>
+<li><code>from io import StringIO</code>: This provides us with a "virtual file" for reading/writing strings to. So this reads/writes (strings) to memory rather than to a file. It can be very useful for some contexts.<br /></li>
+<li><code>from speedtest import timeit ...</code>: We import the <code>timeit</code> decorator (more on that later) and use it with <code>@timeit</code> on top of a function signature.<br /></li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-python">...
+<span style="color: #EF2F27;">def</span> <span style="color: #FBB829;">test_python_function</span><span style="color: #ff8c00;">(</span><span style="color: #EF2F27;">self</span><span style="color: #ff8c00;">)</span>:
+<span style="background-color: #918175;"> </span>   <span style="color: #519F50;">"""Test to see that the python implementation gives us the correct result"""</span>
+<span style="background-color: #918175;"> </span>   <span style="color: #918175; font-style: italic;"># </span><span style="color: #918175; font-style: italic;">...</span>
+<span style="background-color: #918175;"> </span>   <span style="color: #0AAEB3;">python_result</span> = generate_primes.__wrapped__<span style="color: #ff8c00;">(</span><span style="color: #2C78BF;">len</span><span style="color: #ff1493;">(</span>TestPrimeNumbers.PRIMES<span style="color: #ff1493;">)</span><span style="color: #ff8c00;">)</span>
+<span style="background-color: #918175;"> </span>   <span style="color: #EF2F27;">self</span>.assertEqual<span style="color: #ff8c00;">(</span><span style="color: #2C78BF;">tuple</span><span style="color: #ff1493;">(</span>python_result<span style="color: #ff1493;">)</span>, TestPrimeNumbers.PRIMES<span style="color: #ff8c00;">)</span>
+...
+</pre>
+</div>
+
+<p>
+As commented in the code the <code>.__wrapped__</code> attribute of a decorated function gives us the undecorated function.<br />
+</p>
+
+<p>
+To run the unit-tests one can use either:<br />
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">python -m unittest tests_prime_finding.py
+<span style="color: #918175; font-style: italic;"># </span><span style="color: #918175; font-style: italic;">or</span>
+python tests_prime_finding.py <span style="color: #918175; font-style: italic;"># </span><span style="color: #918175; font-style: italic;">Only if unittest.main() is included in the script</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orga56139f" class="outline-3">
+<h3 id="orga56139f"><span class="section-number-3">4.3.</span> Installing the C extension in Python</h3>
+<div class="outline-text-3" id="text-4-3">
+<ul class="org-ul">
 <li><code>pip install .</code>: Install our c-extension<br /></li>
+<li>You will probably need a c compiler on your system. GNU/Linux is built with C &#x2026; so this was not a problem for me. For windows you might (<b>maybe</b>) have to install <a href="https://visualstudio.microsoft.com/vs/features/cplusplus/">Microsoft's C/C++ tools</a>. I'm not sure about Mac.<br /></li>
 </ul>
 </div>
 </div>
@@ -439,7 +519,7 @@ This is where things get &#x2026; ugly. This is the "glue" that glues the simple
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Vincent De Comarmond</p>
-<p class="date">Created: 2024-05-05 Sun 21:48</p>
+<p class="date">Created: 2024-05-05 Sun 22:14</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

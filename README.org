@@ -89,15 +89,15 @@ Feel free to ignore the ~pure_c~ directory. This is where I tested my algorithm 
 
 Note again -  I am not an expert in this. So this stuff is ... very sketchy at best. I've tried to comment/document the code to make it as understandable as possible. Please read the comments for direction.
 
-** python_extension/primefinderfunc.c
+** primefinderfunc.c
 
 This contains the function which computes primes. Note the statement ~#include <stdbool.h>~ - this is how one does imports in C. Note that the function ~generatePrimes~ does not return anything, but populates the array given to it. This is because one can't really return an array from a function in C (this is a bit of a complicated question).
 
 The code here is pretty simple.
 
-** python_extension/primefinderfunc.h
+** primefinderfunc.h
 
-This is how we make things exportable in C. There is nearly nothing here except the function stub ~void generatePrimes(int, long[]);~. The C pre-processor finds the function body (defined above in ~python_extension/primefinderfunc.c~) based on the function signature of this stub and copies the function to wherever one writes ~#include "primefinderfunc.h"~, thereby making it visible in other scripts.
+This is how we make things exportable in C. There is nearly nothing here except the function stub ~void generatePrimes(int, long[]);~. The C pre-processor finds the function body (defined above in ~primefinderfunc.c~) based on the function signature of this stub and copies the function to wherever one writes ~#include "primefinderfunc.h"~, thereby making it visible in other scripts.
 
 Note also the code:
 #+BEGIN_SRC C
@@ -109,7 +109,7 @@ Note also the code:
 
 This simply prevents the code in the header (~.h~ file) from being read multiple times (in a more complicated project) which would cause an error.
 
-** python_extension/primefinder.c
+** primefinder.c
 
 This is where things get ... ugly. This is the "glue" that glues the simple C code to Python. Again, I have gone out-of-my-way to try to comment the code to make it understandable. I do not understand everything that is happening here, but I try to explain what I can.
 
@@ -120,12 +120,65 @@ This is where things get ... ugly. This is the "glue" that glues the simple C co
    + Your path ~<python3.12/Python.h>~ may well be different from mine. Again, I'm unsure about how to deal with this generally and it's out of the scope of this.
 
 
-
-
-
 * The Python code
+
+** setup.py
+
+This is the Python half of the glue sticking together Python and C. This allows us to install the C module as a Python module and use the C function/s as if they were Python (I'm simplifying a bit, but anyways).
+
+What the code does is pretty self-explanatory. Essentially it all boils down to "install this C module as a Python module."
+
+** tests_prime_finding.py
+
+This, more than anything, is just a demonstration of unit-testing with some interesting things thrown in.
+
+Let's quickly glance at some interesting stuff
+
+#+BEGIN_SRC python
+from contextlib import redirect_stdout
+from io import StringIO
+
+import unittest
+
+# Custom
+from speedtest import timeit, generate_primes
+from c_primefinder import find_primes
+
+
+@timeit
+def noarg_func():
+    """Silly testing function"""
+    return 1
+...
+#+END_SRC
+
+*NOTES/Things of Interest:*
+
++ ~from contextlib import redirect_stdout~: This allows us to capture outputs for print statements and write them elsewhere
++ ~from io import StringIO~: This provides us with a "virtual file" for reading/writing strings to. So this reads/writes (strings) to memory rather than to a file. It can be very useful for some contexts.
++ ~from speedtest import timeit ...~: We import the ~timeit~ decorator (more on that later) and use it with ~@timeit~ on top of a function signature.
+
+#+BEGIN_SRC python
+...
+def test_python_function(self):
+    """Test to see that the python implementation gives us the correct result"""
+    # ...
+    python_result = generate_primes.__wrapped__(len(TestPrimeNumbers.PRIMES))
+    self.assertEqual(tuple(python_result), TestPrimeNumbers.PRIMES)
+...
+#+END_SRC
+
+As commented in the code the ~.__wrapped__~ attribute of a decorated function gives us the undecorated function.
+
+To run the unit-tests one can use either:
+#+BEGIN_SRC sh
+  python -m unittest tests_prime_finding.py
+  # or
+  python tests_prime_finding.py # Only if unittest.main() is included in the script
+#+END_SRC
+
 
 ** Installing the C extension in Python
 
-+ ~pip install -r requirements.txt~: Install setuptools ... this is needed to install the c-exension
 + ~pip install .~: Install our c-extension
++ You will probably need a c compiler on your system. GNU/Linux is built with C ... so this was not a problem for me. For windows you might (*maybe*) have to install [[https://visualstudio.microsoft.com/vs/features/cplusplus/][Microsoft's C/C++ tools]]. I'm not sure about Mac.
