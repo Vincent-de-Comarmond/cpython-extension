@@ -1,10 +1,13 @@
 #+title: CPython
 #+subtitle: Stuff you probably didn't know about Python
 #+author: Vincent De Comarmond
-
+#+OPTIONS: ^:nil
+#+OPTIONS: \n:t
 
 *DISCLAIMER:*
 I am not an expert in any of the following Not at all. So ... whatever you see below might be (and probably is) very badly done. The algorithms are definitely not very efficient and the way everything is glued together is probably sub-optimal or plain bad.
+
+
 
 * Preamble: WTF is CPython
 
