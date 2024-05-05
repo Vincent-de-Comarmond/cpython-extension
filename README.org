@@ -1,7 +1,7 @@
 #+title: CPython
 #+subtitle: Stuff you probably didn't know about Python
 #+author: Vincent De Comarmond
-# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/readtheorg_inline/readtheorg_inline.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/readtheorg_inline/readtheorg_inline.theme
 #+OPTIONS: toc:2 
 #+OPTIONS: ^:nil
 #+OPTIONS: \n:t
@@ -89,13 +89,13 @@ Feel free to ignore the ~pure_c~ directory. This is where I tested my algorithm 
 
 Note again -  I am not an expert in this. So this stuff is ... very sketchy at best. I've tried to comment/document the code to make it as understandable as possible. Please read the comments for direction.
 
-** ~python_extension/primefinderfunc.c~
+** python_extension/primefinderfunc.c
 
 This contains the function which computes primes. Note the statement ~#include <stdbool.h>~ - this is how one does imports in C. Note that the function ~generatePrimes~ does not return anything, but populates the array given to it. This is because one can't really return an array from a function in C (this is a bit of a complicated question).
 
 The code here is pretty simple.
 
-** ~python_extension/primefinderfunc.h~
+** python_extension/primefinderfunc.h
 
 This is how we make things exportable in C. There is nearly nothing here except the function stub ~void generatePrimes(int, long[]);~. The C pre-processor finds the function body (defined above in ~python_extension/primefinderfunc.c~) based on the function signature of this stub and copies the function to wherever one writes ~#include "primefinderfunc.h"~, thereby making it visible in other scripts.
 
@@ -109,8 +109,23 @@ Note also the code:
 
 This simply prevents the code in the header (~.h~ file) from being read multiple times (in a more complicated project) which would cause an error.
 
+** python_extension/primefinder.c
 
-* Installing
+This is where things get ... ugly. This is the "glue" that glues the simple C code to Python. Again, I have gone out-of-my-way to try to comment the code to make it understandable. I do not understand everything that is happening here, but I try to explain what I can.
+
+*** Beware of the following.
+
+~#include <python3.12/Python.h> // BEWARE - this may vary on your system~
+   + You will need the Python development headers installed on your system for this and it will have to be on you C compiler's "include" path. On some systems this is trivial. On other systems I have no idea how this is automated (I just checked numpy ... their build processes [[https://github.com/numpy/numpy/blob/main/azure-pipelines.yml][azure pipeline]], [[https://github.com/numpy/numpy/blob/main/meson.build][meson build]] - are fare more complex to manage multiple environments).
+   + Your path ~<python3.12/Python.h>~ may well be different from mine. Again, I'm unsure about how to deal with this generally and it's out of the scope of this.
+
+
+
+
+
+* The Python code
+
+** Installing the C extension in Python
 
 + ~pip install -r requirements.txt~: Install setuptools ... this is needed to install the c-exension
 + ~pip install .~: Install our c-extension
