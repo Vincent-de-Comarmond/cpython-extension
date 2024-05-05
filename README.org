@@ -1,28 +1,33 @@
 #+title: CPython
 #+subtitle: Stuff you probably didn't know about Python
 #+author: Vincent De Comarmond
-# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/bigblow_inline/bigblow_inline.theme
-# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/comfy_inline/comfy_inline.theme
-# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/gray/gray.theme
-# No - this one is for poetry #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/imagine_light/imagine_light.theme
-# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/latexcss/latexcss.theme
-#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/readtheorg_inline/readtheorg_inline.theme
-# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/rethink_inline/rethink_inline.theme
-# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/retro_dark/retro_dark.theme
-# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/simple_gray/simple_gray.theme
-# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/simple_inline/simple_inline.theme
-# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/simple_white/simple_white.theme
-# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/simple_whiteblue/simple_whiteblue.theme
-# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/solarized_dark/solarized_dark.theme
-# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/solarized_dark/solarized_dark.theme
-# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/solarized_light/solarized_light.theme
-# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/stylish_white/stylish_white.theme
-# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/white_clean/white_clean.theme
-
-
-
+# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/readtheorg_inline/readtheorg_inline.theme
+#+OPTIONS: toc:2 
 #+OPTIONS: ^:nil
 #+OPTIONS: \n:t
+
+#+BEGIN_COMMENT
+Rejected export themes
+
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/bigblow_inline/bigblow_inline.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/comfy_inline/comfy_inline.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/gray/gray.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/imagine_light/imagine_light.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/latexcss/latexcss.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/readtheorg_inline/readtheorg_inline.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/rethink_inline/rethink_inline.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/retro_dark/retro_dark.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/simple_gray/simple_gray.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/simple_inline/simple_inline.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/simple_white/simple_white.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/simple_whiteblue/simple_whiteblue.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/solarized_dark/solarized_dark.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/solarized_dark/solarized_dark.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/solarized_light/solarized_light.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/stylish_white/stylish_white.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/white_clean/white_clean.theme
+#+END_COMMENT
+
 
 *DISCLAIMER:*
 I am not an expert in any of the following Not at all. So ... whatever you see below might be (and probably is) very badly done. The algorithms are definitely not very efficient and the way everything is glued together is probably sub-optimal or plain bad.
@@ -76,4 +81,4 @@ Feel free to ignore the ~pure_c~ directory. This is where I tested my algorithm 
 
 * The C code
 
-Note again -  I am not an expert in this. So this stuff is ... very sketchy at best.
+Note again -  I am not an expert in this. So this stuff is ... very sketchy at best. 
