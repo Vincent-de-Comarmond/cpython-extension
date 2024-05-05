@@ -1,0 +1,48 @@
+#+title: CPython
+#+subtitle: Stuff you probably didn't know about Python
+#+author: Vincent De Comarmond
+
+
+*DISCLAIMER:*
+I am not an expert in any of the following Not at all. So ... whatever you see below might be (and probably is) very badly done. The algorithms are definitely not very efficient and the way everything is glued together is probably sub-optimal or plain bad.
+
+* Preamble: WTF is CPython
+
+What you know as Python is actually [[https://github.com/python/cpython][CPython]]. It is the [[https://en.wikipedia.org/wiki/CPython][reference/standard implementation]] of the Python programming language and the most common (by far). [[https://www.python.org/download/alternatives/][Other implementations]] do exist and are used in various contexts. So the long of the short of this is that Python/CPython (I won't differentiate between the two anymore) is actually an interpreted language written in C. I.e. it is something like translator/interpreter of a string/text-file written in [[https://www.cprogramming.com/][C]].
+
+Let's think about why this is. An interpreted language (i.e. one that's not compiled to machine code) cannot run on hardware by itself. This is because hardware cannot understand "words" or strings. Computer chips understand electrical inputs in the form of 0s and 1s. Ultimately everything needs to get cooked down to this. Whatever is translating your Python to 0s and 1s cannot be the same words you see - at some stage whatever is interpreting Python must change the words to numbers. For this compiled/machine code is necessary.
+
+
+** So ... like how is this useful?
+
+Have you ever wondered how [[https://numpy.org/][Numpy]] (for example) is so fast compared to pure python? Or why anybody would choose [[https://pandas.pydata.org/][Pandas']] very non-pythonic syntax? The reason Pandas is useful is because it's faster than "normal Python" one you're working with more than a trivial amount of data.
+
+The reason both of these libraries are "faster" than writing things by hand in Python is where the C in CPython comes in.
++ The standard Python is written in C
++ Is it possible to extend the "standard" Python by writing libraries in C (or even just extend the language itself)?
+  + It turns out that this is indeed possible (though let's leave modifying the language itself to the professionals).
+
+* The project: Make a C-based library to extend Python
+
+So ... let us try to make a C-extension to Python. Let's do something computationally-intensive (like finding prime numbers).
+
+** What the project looks like:
+
+#+BEGIN_QUOTE
+.
+├── LICENSE
+├── pure_c
+│   ├── primefinderfunc.c
+│   ├── primefinderfunc.h
+│   └── primefindermain.c
+├── python_extension
+│   ├── primefinder.c
+│   ├── primefinderfunc.c
+│   ├── primefinderfunc.h
+│   ├── setup.py
+│   ├── speedtest.py
+│   ├── tests_prime_finding.py
+└── README.org
+#+END_QUOTE
+
+Feel free to ignore the ~pure_c~ directory. This is where I tested my algorithm using purely C to ensure it worked before trying to convert it to a Python extension.
