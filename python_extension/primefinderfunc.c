@@ -2,10 +2,10 @@
 #include <stdbool.h> // Import to get booleans
 
 /**
- * Function to populate an array containing the prime numbers (as longs).
- * @param int desiredPrimes: The number of prime numbers to be computed
- * @param long primeNumbers[]: Array of longs which will hold the computed primes
- * @return void - returns nothing
+ Function to populate an array containing the prime numbers (as longs).
+ @param int desiredPrimes: The number of prime numbers to be computed
+ @param long primeNumbers[]: Array of longs which will hold the computed primes
+ @return void - returns nothing
  */
 void generatePrimes(int desiredPrimes, long primeNumbers[]) {
 
