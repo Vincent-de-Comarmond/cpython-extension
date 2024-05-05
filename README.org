@@ -1,17 +1,36 @@
 #+title: CPython
 #+subtitle: Stuff you probably didn't know about Python
 #+author: Vincent De Comarmond
+# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/bigblow_inline/bigblow_inline.theme
+# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/comfy_inline/comfy_inline.theme
+# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/gray/gray.theme
+# No - this one is for poetry #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/imagine_light/imagine_light.theme
+# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/latexcss/latexcss.theme
+#+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/readtheorg_inline/readtheorg_inline.theme
+# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/rethink_inline/rethink_inline.theme
+# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/retro_dark/retro_dark.theme
+# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/simple_gray/simple_gray.theme
+# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/simple_inline/simple_inline.theme
+# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/simple_white/simple_white.theme
+# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/simple_whiteblue/simple_whiteblue.theme
+# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/solarized_dark/solarized_dark.theme
+# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/solarized_dark/solarized_dark.theme
+# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/solarized_light/solarized_light.theme
+# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/stylish_white/stylish_white.theme
+# #+SETUPFILE: /home/vincentdecomarmond/PersonalProjects/org-themes/src/white_clean/white_clean.theme
+
+
+
 #+OPTIONS: ^:nil
 #+OPTIONS: \n:t
 
 *DISCLAIMER:*
 I am not an expert in any of the following Not at all. So ... whatever you see below might be (and probably is) very badly done. The algorithms are definitely not very efficient and the way everything is glued together is probably sub-optimal or plain bad.
 
-The project can be cloned from here
-~git clone https://github.com/Vincent-de-Comarmond/cpython-extension.git~
-or
-~git clone git@github.com:Vincent-de-Comarmond/cpython-extension.git~
-or https://github.com/Vincent-de-Comarmond/cpython-extension
+The project can be cloned from here:
++ ~git clone https://github.com/Vincent-de-Comarmond/cpython-extension.git~
++ ~git clone git@github.com:Vincent-de-Comarmond/cpython-extension.git~
++ https://github.com/Vincent-de-Comarmond/cpython-extension
 
 * Preamble: WTF is CPython
 
@@ -53,3 +72,8 @@ So ... let us try to make a C-extension to Python. Let's do something computatio
 #+END_EXAMPLE
 
 Feel free to ignore the ~pure_c~ directory. This is where I tested my algorithm using purely C to ensure it worked before trying to convert it to a Python extension.
+
+
+* The C code
+
+Note again -  I am not an expert in this. So this stuff is ... very sketchy at best.
