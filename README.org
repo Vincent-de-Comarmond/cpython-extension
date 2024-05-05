@@ -31,7 +31,7 @@ So ... let us try to make a C-extension to Python. Let's do something computatio
 
 ** What the project looks like:
 
-#+BEGIN_QUOTE
+#+BEGIN_EXAMPLE
 .
 ├── LICENSE
 ├── pure_c
@@ -46,6 +46,6 @@ So ... let us try to make a C-extension to Python. Let's do something computatio
 │   ├── speedtest.py
 │   ├── tests_prime_finding.py
 └── README.org
-#+END_QUOTE
+#+END_EXAMPLE
 
 Feel free to ignore the ~pure_c~ directory. This is where I tested my algorithm using purely C to ensure it worked before trying to convert it to a Python extension.
