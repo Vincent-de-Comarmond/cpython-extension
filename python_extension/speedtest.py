@@ -29,7 +29,7 @@ def timeit(func: Callable) -> Callable[[Callable], Callable]:
         _args += ", " if len(kwargs) > 0 and len(args) > 0 else ""
         _kwargs: str = ", ".join(f"{k}={v}" for k, v in kwargs.items())
 
-        print(f"{_name}({_args}{_kwargs}) execution time {toc-tic:4f}")
+        print(f"{_name}({_args}{_kwargs}) execution time {toc-tic:4f}s")
         return result
 
     return modified_function
