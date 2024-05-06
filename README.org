@@ -185,6 +185,118 @@ To run the unit-tests one can use either:
 
 ** speedtest.py
 
-Things are finally coming to a head. We are going to test if our c-based library (together with all the glue of moving things between C and Python) is faster than the same algorithm in Python.
+Things are finally coming to a head. We are going to test if our c-based library (together with all the glue of moving things between C and Python) is faster than the same algorithm in Python. There's a bunch of interesting things here.
+
+Firstly you can see the ~timeit~ [[https://realpython.com/primer-on-python-decorators/][decorator]]. A [[https://realpython.com/primer-on-python-decorators/][decorator]] is a function which modifies another function. In this case the decorator prints out how long it took for the function to execute, it's arguments etc. as ~myfunction(arg1, arg2, kwarg1=val1, kwarg2=val2) execution time 0.001s~. Pyspark's [[https://spark.apache.org/docs/3.1.3/api/python/reference/api/pyspark.sql.functions.udf.html][udf]] is also a decorator. Decorators can be very useful, but shouldn't be used thoughtlessly, as they can make the code more difficult to understand. Please note that there are [[https://docs.python.org/3/library/timeit.html][far better ways]] (more reliable) to test the performance in python - I have used this here to show an example of writing a decorator. Decorators can be applied in one of 2 ways - either by using an ~@~ on top of the function one wants to decorate, or by calling the decorating function and passing in the function you want to modify as an argument. Like so:
+
+#+BEGIN_SRC python
+...
+# First way of applying a decorator
+@timeit
+def generate_primes(desired_primes: int) -> List[int]:
+    ...
+
+# Second way ... making another function by using it as an argument to a decorator
+timeit(find_primes)(DESIRED_NUM_PRIMES)
+#+END_SRC
+
+In this script there are also two functions ~def generate_primes_c_copy(desired_primes: int, prime_numbers: List[int]) -> None:~ and ~def generate_primes(desired_primes: int) -> List[int]:~. These "look" very funny (non-pythonic), but this is because I've tried to copy the C algorithm exactly (so that we can have a fair test).
+
+** The results and me showing off some org-mode stuff
+
+The script needs the desired number of primes to generate as an input. So call the script like so. Also, note, org-mode is amazing (for many reasons) - one of which is that it allows you to run nearly any language (and any combination of languages) in an org notebook, and even to pass results from one language to another language.
+
+#+BEGIN_SRC sh :exports both
+  cd python_extension  # Remember this is suppossed to be the working directory
+  source venv/bin/activate
+  python speedtest.py 10000
+  python speedtest.py 50000
+#+END_SRC
+
+#+RESULTS:
+| find_primes(10000)     | execution | time | 0.370544s  |
+| generate_primes(10000) | execution | time | 2.991399s  |
+| find_primes(50000)     | execution | time | 9.217098s  |
+| generate_primes(50000) | execution | time | 75.331726s |
+
+And there you have it - the C extension is nearly 10x faster than the pure python solution.
+
+*NOTE:* This is still very much slower than a pure-c solution would be - if you look ~primefinder.c~ you'll see that a huge amount of work goes into converting Python Objects to C and C things to Python Objects. If were were only doing C - this inefficiency would be removed.
 
 
+** Appendix: Org-mode supported languages:
+
+#+CAPTION: Supported languages 
+| *Language*      | *Identifier*       | *Documentation*        | *Maintainer*        |
+|---------------+------------------+----------------------+-------------------|
+| AWK           | awk              | ob-doc-awk           | Tyler Smith       |
+| ApacheGroovy  | groovy           |                      | Palak Mathur      |
+| Arduino       | arduino          |                      |                   |
+| Asymptote     | asymptote        | ob-doc-asymptote     |                   |
+| C             | C                | ob-doc-c             | Thierry Banel     |
+| C++           | cpp              | ob-doc-c             | Thierry Banel     |
+| CLI           | shell            | ob-doc-shell         |                   |
+| CSS           | css              | ob-doc-css           |                   |
+| Calc          | calc             |                      | Tom Gillespie     |
+| Clojure       | clojure          | ob-doc-clojure       | Daniel Kraus      |
+| Comintmode    | comint           |                      |                   |
+| Coq           | coq              |                      |                   |
+| D             | D                | ob-doc-c             | Thierry Banel     |
+| EmacsLisp     | emacs-lisp,elisp | ob-doc-elisp         |                   |
+| Eshell        | eshell           | ob-doc-eshell        | star diviner      |
+| FOMUS         | fomus            |                      |                   |
+| Fortran       | F90              |                      |                   |
+| GNUScreen     | screen           | ob-doc-screen        | Ken Mankoff       |
+| GNUsed        | sed              |                      |                   |
+| Gforth        | forth            |                      |                   |
+| Gnuplot       | gnuplot          | ob-doc-gnuplot       | Ihor Radchenko    |
+| Graphviz      | dot              | ob-doc-dot           | Justin Abrahms    |
+| Haskell       | haskell          |                      | Lawrence Bottorff |
+| J             | J                | ob-doc-J             |                   |
+| Java          | java             | ob-doc-java          | Ian Martins       |
+| Julia         | julia            | ob-doc-julia         | Pedro Bruel       |
+| LaTeX         | latex            | ob-doc-LaTeX         |                   |
+| LilyPond      | ly               | ob-doc-lilypond      |                   |
+| Lisp          | lisp             | ob-doc-lisp          |                   |
+| Lua           | lua              | ob-doc-lua           |                   |
+| MATLAB®       | matlab           | ob-doc-octave-matlab |                   |
+| Make          | makefile         | ob-doc-makefile      |                   |
+| Mathematica   | mathematica      |                      |                   |
+| Mathomatic™   | mathomatic       | ob-doc-mathomatic    |                   |
+| Maxima        | max              | ob-doc-maxima        |                   |
+| Mono          | csharp           |                      |                   |
+| Mono          | vbnet            |                      |                   |
+| Mozart        | oz               | ob-doc-oz            |                   |
+| Mscgen        | mscgen           | ob-doc-mscgen        |                   |
+| Node.js       | js               | ob-doc-js            |                   |
+| OCaml         | ocaml            |                      |                   |
+| Octave        | octave           | ob-doc-octave        |                   |
+| Orgmode       | org              | ob-doc-org           |                   |
+| PHP           | php              |                      |                   |
+| Perl          | perl             | ob-doc-perl          | Corwin Brust      |
+| PicoLisp      | picolisp         | ob-doc-picolisp      |                   |
+| PlantUML      | plantuml         | ob-doc-plantuml      |                   |
+| Processing    | processing       |                      | Jarmo Hurri       |
+| Python        | python           | ob-doc-python        | Jack Kamm         |
+| R             | R                | ob-doc-R             | Jeremie Juste     |
+| Redis         | redis            |                      |                   |
+| Ruby          | ruby             |                      |                   |
+| SMILES        | smiles           |                      |                   |
+| SPICE         | spice            |                      |                   |
+| SQL           | sql              | ob-doc-sql           | Daniel Kraus      |
+| SQLite        | sqlite           | ob-doc-sqlite        | Nick Savage       |
+| Sass          | sass             |                      |                   |
+| Scheme        | scheme           | ob-doc-scheme        |                   |
+| Shen          | shen             |                      |                   |
+| Stan          | stan             | ob-doc-stan          |                   |
+| Stata         | stata            | ob-doc-stata         |                   |
+| SuperCollider | sclang           |                      |                   |
+| Tcl           | tcl              | ob-doc-tcl           |                   |
+| Vala          | vala             | ob-doc-vala          |                   |
+| abc           | abc              | ob-doc-abc           |                   |
+| ditaa         | ditaa            | ob-doc-ditaa         |                   |
+| ebnf2ps       | ebnf             |                      |                   |
+| hledger       | hledger          |                      |                   |
+| io            | io               |                      |                   |
+| ledger        | ledger           | ob-doc-ledger        |                   |
+| ΕΥΚΛΕΙΔΗΣ     | eukleides        | ob-doc-eukleides     |                   |

@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2024-05-05 Sun 22:14 -->
+<!-- 2024-05-06 Mon 08:24 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>CPython</title>
@@ -222,39 +222,42 @@ $(function() {    $('.note').before("<p class='admonition-title note'>Note</p>")
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org7f87cdf">0.1. DISCLAIMER:</a></li>
-<li><a href="#orgad267c8">0.2. Key resources:</a></li>
+<li><a href="#orgfd65336">0.1. DISCLAIMER:</a></li>
+<li><a href="#org4d64a68">0.2. Key resources:</a></li>
 </ul>
 </li>
-<li><a href="#orgc5c09d3">1. Preamble: WTF is CPython</a>
+<li><a href="#org29e69db">1. Preamble: WTF is CPython</a>
 <ul>
-<li><a href="#orgf44482c">1.1. So &#x2026; like how is this useful?</a></li>
+<li><a href="#org9f378a2">1.1. So &#x2026; like how is this useful?</a></li>
 </ul>
 </li>
-<li><a href="#org984b950">2. The project: Make a C-based library to extend Python</a>
+<li><a href="#orge472c49">2. The project: Make a C-based library to extend Python</a>
 <ul>
-<li><a href="#org32e93f6">2.1. What the project looks like:</a></li>
+<li><a href="#org671efc2">2.1. What the project looks like:</a></li>
 </ul>
 </li>
-<li><a href="#org04d7e31">3. The C code</a>
+<li><a href="#orgebec6f4">3. The C code</a>
 <ul>
-<li><a href="#org2d6c2fe">3.1. primefinderfunc.c</a></li>
-<li><a href="#orgcc015f4">3.2. primefinderfunc.h</a></li>
-<li><a href="#orge131db2">3.3. primefinder.c</a></li>
+<li><a href="#orgeb42111">3.1. primefinderfunc.c</a></li>
+<li><a href="#org8746a00">3.2. primefinderfunc.h</a></li>
+<li><a href="#orgcef6773">3.3. primefinder.c</a></li>
 </ul>
 </li>
-<li><a href="#org878e78c">4. The Python code</a>
+<li><a href="#orga0d0a5f">4. The Python code</a>
 <ul>
-<li><a href="#org086f6a7">4.1. setup.py</a></li>
-<li><a href="#orgf38c882">4.2. tests_prime_finding.py</a></li>
-<li><a href="#orga56139f">4.3. Installing the C extension in Python</a></li>
+<li><a href="#org50f3487">4.1. Installing the C extension in Python</a></li>
+<li><a href="#org531cd18">4.2. setup.py</a></li>
+<li><a href="#org9548d67">4.3. tests_prime_finding.py</a></li>
+<li><a href="#org2e86603">4.4. speedtest.py</a></li>
+<li><a href="#orgc09b07d">4.5. The results and me showing off some org-mode stuff</a></li>
+<li><a href="#orge604877">4.6. Appendix: Org-mode supported languages:</a></li>
 </ul>
 </div>
 </div>
 
 
-<div id="outline-container-org7f87cdf" class="outline-3">
-<h3 id="org7f87cdf"><span class="section-number-3">0.1.</span> DISCLAIMER:</h3>
+<div id="outline-container-orgfd65336" class="outline-3">
+<h3 id="orgfd65336"><span class="section-number-3">0.1.</span> DISCLAIMER:</h3>
 <div class="outline-text-3" id="text-0-1">
 <p>
 I am not an expert in any of the following Not at all. So &#x2026; whatever you see below might be (and probably is) very badly done. The algorithms are definitely not very efficient and the way everything is glued together is probably sub-optimal or plain bad.<br />
@@ -271,8 +274,8 @@ The project can be cloned from here:<br />
 </div>
 </div>
 
-<div id="outline-container-orgad267c8" class="outline-3">
-<h3 id="orgad267c8"><span class="section-number-3">0.2.</span> Key resources:</h3>
+<div id="outline-container-org4d64a68" class="outline-3">
+<h3 id="org4d64a68"><span class="section-number-3">0.2.</span> Key resources:</h3>
 <div class="outline-text-3" id="text-0-2">
 <ul class="org-ul">
 <li><a href="http://saidvandeklundert.net/learn/2022-06-02-extending-python-with-c/">Extending Python with C</a><br /></li>
@@ -282,8 +285,8 @@ The project can be cloned from here:<br />
 </div>
 </div>
 
-<div id="outline-container-orgc5c09d3" class="outline-2">
-<h2 id="orgc5c09d3"><span class="section-number-2">1.</span> Preamble: WTF is CPython</h2>
+<div id="outline-container-org29e69db" class="outline-2">
+<h2 id="org29e69db"><span class="section-number-2">1.</span> Preamble: WTF is CPython</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 What you know as Python is actually <a href="https://github.com/python/cpython">CPython</a>. It is the <a href="https://en.wikipedia.org/wiki/CPython">reference/standard implementation</a> of the Python programming language and the most common (by far). <a href="https://www.python.org/download/alternatives/">Other implementations</a> do exist and are used in various contexts. So the long of the short of this is that Python/CPython (I won't differentiate between the two anymore) is actually an interpreted language written in C. I.e. it is something like translator/interpreter of a string/text-file written in <a href="https://www.cprogramming.com/">C</a>.<br />
@@ -295,8 +298,8 @@ Let's think about why this is. An interpreted language (i.e. one that's not comp
 </div>
 
 
-<div id="outline-container-orgf44482c" class="outline-3">
-<h3 id="orgf44482c"><span class="section-number-3">1.1.</span> So &#x2026; like how is this useful?</h3>
+<div id="outline-container-org9f378a2" class="outline-3">
+<h3 id="org9f378a2"><span class="section-number-3">1.1.</span> So &#x2026; like how is this useful?</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 Have you ever wondered how <a href="https://numpy.org/">Numpy</a> (for example) is so fast compared to pure python? Or why anybody would choose <a href="https://pandas.pydata.org/">Pandas'</a> very non-pythonic syntax? The reason Pandas is useful is because it's faster than "normal Python" one you're working with more than a trivial amount of data.<br />
@@ -316,18 +319,18 @@ The reason both of these libraries are "faster" than writing things by hand in P
 </div>
 </div>
 
-<div id="outline-container-org984b950" class="outline-2">
-<h2 id="org984b950"><span class="section-number-2">2.</span> The project: Make a C-based library to extend Python</h2>
+<div id="outline-container-orge472c49" class="outline-2">
+<h2 id="orge472c49"><span class="section-number-2">2.</span> The project: Make a C-based library to extend Python</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 So &#x2026; let us try to make a C-extension to Python. Let's do something computationally-intensive (like finding prime numbers).<br />
 </p>
 </div>
 
-<div id="outline-container-org32e93f6" class="outline-3">
-<h3 id="org32e93f6"><span class="section-number-3">2.1.</span> What the project looks like:</h3>
+<div id="outline-container-org671efc2" class="outline-3">
+<h3 id="org671efc2"><span class="section-number-3">2.1.</span> What the project looks like:</h3>
 <div class="outline-text-3" id="text-2-1">
-<pre class="example" id="orgaed89fc">
+<pre class="example" id="org4acde09">
 .
 ├── LICENSE
 ├── pure_c
@@ -352,16 +355,16 @@ Feel free to ignore the <code>pure_c</code> directory. This is where I tested my
 </div>
 
 
-<div id="outline-container-org04d7e31" class="outline-2">
-<h2 id="org04d7e31"><span class="section-number-2">3.</span> The C code</h2>
+<div id="outline-container-orgebec6f4" class="outline-2">
+<h2 id="orgebec6f4"><span class="section-number-2">3.</span> The C code</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 Note again -  I am not an expert in this. So this stuff is &#x2026; very sketchy at best. I've tried to comment/document the code to make it as understandable as possible. Please read the comments for direction.<br />
 </p>
 </div>
 
-<div id="outline-container-org2d6c2fe" class="outline-3">
-<h3 id="org2d6c2fe"><span class="section-number-3">3.1.</span> primefinderfunc.c</h3>
+<div id="outline-container-orgeb42111" class="outline-3">
+<h3 id="orgeb42111"><span class="section-number-3">3.1.</span> primefinderfunc.c</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 This contains the function which computes primes. Note the statement <code>#include &lt;stdbool.h&gt;</code> - this is how one does imports in C. Note that the function <code>generatePrimes</code> does not return anything, but populates the array given to it. This is because one can't really return an array from a function in C (this is a bit of a complicated question).<br />
@@ -373,8 +376,8 @@ The code here is pretty simple.<br />
 </div>
 </div>
 
-<div id="outline-container-orgcc015f4" class="outline-3">
-<h3 id="orgcc015f4"><span class="section-number-3">3.2.</span> primefinderfunc.h</h3>
+<div id="outline-container-org8746a00" class="outline-3">
+<h3 id="org8746a00"><span class="section-number-3">3.2.</span> primefinderfunc.h</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
 This is how we make things exportable in C. There is nearly nothing here except the function stub <code>void generatePrimes(int, long[]);</code>. The C pre-processor finds the function body (defined above in <code>primefinderfunc.c</code>) based on the function signature of this stub and copies the function to wherever one writes <code>#include "primefinderfunc.h"</code>, thereby making it visible in other scripts.<br />
@@ -397,16 +400,16 @@ This simply prevents the code in the header (<code>.h</code> file) from being re
 </div>
 </div>
 
-<div id="outline-container-orge131db2" class="outline-3">
-<h3 id="orge131db2"><span class="section-number-3">3.3.</span> primefinder.c</h3>
+<div id="outline-container-orgcef6773" class="outline-3">
+<h3 id="orgcef6773"><span class="section-number-3">3.3.</span> primefinder.c</h3>
 <div class="outline-text-3" id="text-3-3">
 <p>
 This is where things get &#x2026; ugly. This is the "glue" that glues the simple C code to Python. Again, I have gone out-of-my-way to try to comment the code to make it understandable. I do not understand everything that is happening here, but I try to explain what I can.<br />
 </p>
 </div>
 
-<div id="outline-container-org3dae9a4" class="outline-4">
-<h4 id="org3dae9a4"><span class="section-number-4">3.3.1.</span> Beware of the following.</h4>
+<div id="outline-container-orgd00d2f1" class="outline-4">
+<h4 id="orgd00d2f1"><span class="section-number-4">3.3.1.</span> Beware of the following.</h4>
 <div class="outline-text-4" id="text-3-3-1">
 <p>
 <code>#include &lt;python3.12/Python.h&gt; // BEWARE - this may vary on your system</code><br />
@@ -421,13 +424,24 @@ This is where things get &#x2026; ugly. This is the "glue" that glues the simple
 </div>
 
 
-<div id="outline-container-org878e78c" class="outline-2">
-<h2 id="org878e78c"><span class="section-number-2">4.</span> The Python code</h2>
+<div id="outline-container-orga0d0a5f" class="outline-2">
+<h2 id="orga0d0a5f"><span class="section-number-2">4.</span> The Python code</h2>
 <div class="outline-text-2" id="text-4">
 </div>
-<div id="outline-container-org086f6a7" class="outline-3">
-<h3 id="org086f6a7"><span class="section-number-3">4.1.</span> setup.py</h3>
+<div id="outline-container-org50f3487" class="outline-3">
+<h3 id="org50f3487"><span class="section-number-3">4.1.</span> Installing the C extension in Python</h3>
 <div class="outline-text-3" id="text-4-1">
+<ul class="org-ul">
+<li><code>pip install .</code>: Install our c-extension<br /></li>
+<li>You will probably need a c compiler on your system. GNU/Linux is built with C &#x2026; so this was not a problem for me. For windows you might (<b>maybe</b>) have to install <a href="https://visualstudio.microsoft.com/vs/features/cplusplus/">Microsoft's C/C++ tools</a>. I'm not sure about Mac.<br /></li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org531cd18" class="outline-3">
+<h3 id="org531cd18"><span class="section-number-3">4.2.</span> setup.py</h3>
+<div class="outline-text-3" id="text-4-2">
 <p>
 This is the Python half of the glue sticking together Python and C. This allows us to install the C module as a Python module and use the C function/s as if they were Python (I'm simplifying a bit, but anyways).<br />
 </p>
@@ -438,9 +452,9 @@ What the code does is pretty self-explanatory. Essentially it all boils down to 
 </div>
 </div>
 
-<div id="outline-container-orgf38c882" class="outline-3">
-<h3 id="orgf38c882"><span class="section-number-3">4.2.</span> tests_prime_finding.py</h3>
-<div class="outline-text-3" id="text-4-2">
+<div id="outline-container-org9548d67" class="outline-3">
+<h3 id="org9548d67"><span class="section-number-3">4.3.</span> tests_prime_finding.py</h3>
+<div class="outline-text-3" id="text-4-3">
 <p>
 This, more than anything, is just a demonstration of unit-testing with some interesting things thrown in.<br />
 </p>
@@ -505,21 +519,633 @@ python tests_prime_finding.py <span style="color: #918175; font-style: italic;">
 </div>
 </div>
 
+<div id="outline-container-org2e86603" class="outline-3">
+<h3 id="org2e86603"><span class="section-number-3">4.4.</span> speedtest.py</h3>
+<div class="outline-text-3" id="text-4-4">
+<p>
+Things are finally coming to a head. We are going to test if our c-based library (together with all the glue of moving things between C and Python) is faster than the same algorithm in Python. There's a bunch of interesting things here.<br />
+</p>
 
-<div id="outline-container-orga56139f" class="outline-3">
-<h3 id="orga56139f"><span class="section-number-3">4.3.</span> Installing the C extension in Python</h3>
-<div class="outline-text-3" id="text-4-3">
-<ul class="org-ul">
-<li><code>pip install .</code>: Install our c-extension<br /></li>
-<li>You will probably need a c compiler on your system. GNU/Linux is built with C &#x2026; so this was not a problem for me. For windows you might (<b>maybe</b>) have to install <a href="https://visualstudio.microsoft.com/vs/features/cplusplus/">Microsoft's C/C++ tools</a>. I'm not sure about Mac.<br /></li>
-</ul>
+<p>
+Firstly you can see the <code>timeit</code> <a href="https://realpython.com/primer-on-python-decorators/">decorator</a>. A <a href="https://realpython.com/primer-on-python-decorators/">decorator</a> is a function which modifies another function. In this case the decorator prints out how long it took for the function to execute, it's arguments etc. as <code>myfunction(arg1, arg2, kwarg1=val1, kwarg2=val2) execution time 0.001s</code>. Pyspark's <a href="https://spark.apache.org/docs/3.1.3/api/python/reference/api/pyspark.sql.functions.udf.html">udf</a> is also a decorator. Decorators can be very useful, but shouldn't be used thoughtlessly, as they can make the code more difficult to understand. Please note that there are <a href="https://docs.python.org/3/library/timeit.html">far better ways</a> (more reliable) to test the performance in python - I have used this here to show an example of writing a decorator. Decorators can be applied in one of 2 ways - either by using an <code>@</code> on top of the function one wants to decorate, or by calling the decorating function and passing in the function you want to modify as an argument. Like so:<br />
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">...
+<span style="color: #918175; font-style: italic;"># </span><span style="color: #918175; font-style: italic;">First way of applying a decorator</span>
+<span style="color: #68A8E4;">@timeit</span>
+<span style="color: #EF2F27;">def</span> <span style="color: #FBB829;">generate_primes</span><span style="color: #ff8c00;">(</span>desired_primes: <span style="color: #2C78BF;">int</span><span style="color: #ff8c00;">)</span> -&gt; List<span style="color: #ff8c00;">[</span><span style="color: #2C78BF;">int</span><span style="color: #ff8c00;">]</span>:
+<span style="background-color: #918175;"> </span>   ...
+
+<span style="color: #918175; font-style: italic;"># </span><span style="color: #918175; font-style: italic;">Second way ... making another function by using it as an argument to a decorator</span>
+timeit<span style="color: #ff8c00;">(</span>find_primes<span style="color: #ff8c00;">)(</span>DESIRED_NUM_PRIMES<span style="color: #ff8c00;">)</span>
+</pre>
+</div>
+
+<p>
+In this script there are also two functions <code>def generate_primes_c_copy(desired_primes: int, prime_numbers: List[int]) -&gt; None:</code> and <code>def generate_primes(desired_primes: int) -&gt; List[int]:</code>. These "look" very funny (non-pythonic), but this is because I've tried to copy the C algorithm exactly (so that we can have a fair test).<br />
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc09b07d" class="outline-3">
+<h3 id="orgc09b07d"><span class="section-number-3">4.5.</span> The results and me showing off some org-mode stuff</h3>
+<div class="outline-text-3" id="text-4-5">
+<p>
+The script needs the desired number of primes to generate as an input. So call the script like so. Also, note, org-mode is amazing (for many reasons) - one of which is that it allows you to run nearly any language (and any combination of languages) in an org notebook, and even to pass results from one language to another language.<br />
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #2C78BF;">cd</span> python_extension  <span style="color: #918175; font-style: italic;"># </span><span style="color: #918175; font-style: italic;">Remember this is suppossed to be the working directory</span>
+<span style="color: #2C78BF;">source</span> venv/bin/activate
+python speedtest.py 10000
+python speedtest.py 50000
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">find_primes(10000)</td>
+<td class="org-left">execution</td>
+<td class="org-left">time</td>
+<td class="org-left">0.370583s</td>
+</tr>
+
+<tr>
+<td class="org-left">generate_primes(10000)</td>
+<td class="org-left">execution</td>
+<td class="org-left">time</td>
+<td class="org-left">2.981234s</td>
+</tr>
+
+<tr>
+<td class="org-left">find_primes(50000)</td>
+<td class="org-left">execution</td>
+<td class="org-left">time</td>
+<td class="org-left">9.097029s</td>
+</tr>
+
+<tr>
+<td class="org-left">generate_primes(50000)</td>
+<td class="org-left">execution</td>
+<td class="org-left">time</td>
+<td class="org-left">77.379003s</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+And there you have it - the C extension is nearly 10x faster than the pure python solution.<br />
+</p>
+
+<p>
+<b>NOTE:</b> This is still very much slower than a pure-c solution would be - if you look <code>primefinder.c</code> you'll see that a huge amount of work goes into converting Python Objects to C and C things to Python Objects. If were were only doing C - this inefficiency would be removed.<br />
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orge604877" class="outline-3">
+<h3 id="orge604877"><span class="section-number-3">4.6.</span> Appendix: Org-mode supported languages:</h3>
+<div class="outline-text-3" id="text-4-6">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> Supported languages</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left"><b>Language</b></th>
+<th scope="col" class="org-left"><b>Identifier</b></th>
+<th scope="col" class="org-left"><b>Documentation</b></th>
+<th scope="col" class="org-left"><b>Maintainer</b></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">AWK</td>
+<td class="org-left">awk</td>
+<td class="org-left">ob-doc-awk</td>
+<td class="org-left">Tyler Smith</td>
+</tr>
+
+<tr>
+<td class="org-left">ApacheGroovy</td>
+<td class="org-left">groovy</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Palak Mathur</td>
+</tr>
+
+<tr>
+<td class="org-left">Arduino</td>
+<td class="org-left">arduino</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Asymptote</td>
+<td class="org-left">asymptote</td>
+<td class="org-left">ob-doc-asymptote</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">C</td>
+<td class="org-left">C</td>
+<td class="org-left">ob-doc-c</td>
+<td class="org-left">Thierry Banel</td>
+</tr>
+
+<tr>
+<td class="org-left">C++</td>
+<td class="org-left">cpp</td>
+<td class="org-left">ob-doc-c</td>
+<td class="org-left">Thierry Banel</td>
+</tr>
+
+<tr>
+<td class="org-left">CLI</td>
+<td class="org-left">shell</td>
+<td class="org-left">ob-doc-shell</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">CSS</td>
+<td class="org-left">css</td>
+<td class="org-left">ob-doc-css</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Calc</td>
+<td class="org-left">calc</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Tom Gillespie</td>
+</tr>
+
+<tr>
+<td class="org-left">Clojure</td>
+<td class="org-left">clojure</td>
+<td class="org-left">ob-doc-clojure</td>
+<td class="org-left">Daniel Kraus</td>
+</tr>
+
+<tr>
+<td class="org-left">Comintmode</td>
+<td class="org-left">comint</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Coq</td>
+<td class="org-left">coq</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">D</td>
+<td class="org-left">D</td>
+<td class="org-left">ob-doc-c</td>
+<td class="org-left">Thierry Banel</td>
+</tr>
+
+<tr>
+<td class="org-left">EmacsLisp</td>
+<td class="org-left">emacs-lisp,elisp</td>
+<td class="org-left">ob-doc-elisp</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Eshell</td>
+<td class="org-left">eshell</td>
+<td class="org-left">ob-doc-eshell</td>
+<td class="org-left">star diviner</td>
+</tr>
+
+<tr>
+<td class="org-left">FOMUS</td>
+<td class="org-left">fomus</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Fortran</td>
+<td class="org-left">F90</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">GNUScreen</td>
+<td class="org-left">screen</td>
+<td class="org-left">ob-doc-screen</td>
+<td class="org-left">Ken Mankoff</td>
+</tr>
+
+<tr>
+<td class="org-left">GNUsed</td>
+<td class="org-left">sed</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Gforth</td>
+<td class="org-left">forth</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Gnuplot</td>
+<td class="org-left">gnuplot</td>
+<td class="org-left">ob-doc-gnuplot</td>
+<td class="org-left">Ihor Radchenko</td>
+</tr>
+
+<tr>
+<td class="org-left">Graphviz</td>
+<td class="org-left">dot</td>
+<td class="org-left">ob-doc-dot</td>
+<td class="org-left">Justin Abrahms</td>
+</tr>
+
+<tr>
+<td class="org-left">Haskell</td>
+<td class="org-left">haskell</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Lawrence Bottorff</td>
+</tr>
+
+<tr>
+<td class="org-left">J</td>
+<td class="org-left">J</td>
+<td class="org-left">ob-doc-J</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Java</td>
+<td class="org-left">java</td>
+<td class="org-left">ob-doc-java</td>
+<td class="org-left">Ian Martins</td>
+</tr>
+
+<tr>
+<td class="org-left">Julia</td>
+<td class="org-left">julia</td>
+<td class="org-left">ob-doc-julia</td>
+<td class="org-left">Pedro Bruel</td>
+</tr>
+
+<tr>
+<td class="org-left">LaTeX</td>
+<td class="org-left">latex</td>
+<td class="org-left">ob-doc-LaTeX</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">LilyPond</td>
+<td class="org-left">ly</td>
+<td class="org-left">ob-doc-lilypond</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Lisp</td>
+<td class="org-left">lisp</td>
+<td class="org-left">ob-doc-lisp</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Lua</td>
+<td class="org-left">lua</td>
+<td class="org-left">ob-doc-lua</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">MATLAB®</td>
+<td class="org-left">matlab</td>
+<td class="org-left">ob-doc-octave-matlab</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Make</td>
+<td class="org-left">makefile</td>
+<td class="org-left">ob-doc-makefile</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Mathematica</td>
+<td class="org-left">mathematica</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Mathomatic™</td>
+<td class="org-left">mathomatic</td>
+<td class="org-left">ob-doc-mathomatic</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Maxima</td>
+<td class="org-left">max</td>
+<td class="org-left">ob-doc-maxima</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Mono</td>
+<td class="org-left">csharp</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Mono</td>
+<td class="org-left">vbnet</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Mozart</td>
+<td class="org-left">oz</td>
+<td class="org-left">ob-doc-oz</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Mscgen</td>
+<td class="org-left">mscgen</td>
+<td class="org-left">ob-doc-mscgen</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Node.js</td>
+<td class="org-left">js</td>
+<td class="org-left">ob-doc-js</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">OCaml</td>
+<td class="org-left">ocaml</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Octave</td>
+<td class="org-left">octave</td>
+<td class="org-left">ob-doc-octave</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Orgmode</td>
+<td class="org-left">org</td>
+<td class="org-left">ob-doc-org</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">PHP</td>
+<td class="org-left">php</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Perl</td>
+<td class="org-left">perl</td>
+<td class="org-left">ob-doc-perl</td>
+<td class="org-left">Corwin Brust</td>
+</tr>
+
+<tr>
+<td class="org-left">PicoLisp</td>
+<td class="org-left">picolisp</td>
+<td class="org-left">ob-doc-picolisp</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">PlantUML</td>
+<td class="org-left">plantuml</td>
+<td class="org-left">ob-doc-plantuml</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Processing</td>
+<td class="org-left">processing</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Jarmo Hurri</td>
+</tr>
+
+<tr>
+<td class="org-left">Python</td>
+<td class="org-left">python</td>
+<td class="org-left">ob-doc-python</td>
+<td class="org-left">Jack Kamm</td>
+</tr>
+
+<tr>
+<td class="org-left">R</td>
+<td class="org-left">R</td>
+<td class="org-left">ob-doc-R</td>
+<td class="org-left">Jeremie Juste</td>
+</tr>
+
+<tr>
+<td class="org-left">Redis</td>
+<td class="org-left">redis</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Ruby</td>
+<td class="org-left">ruby</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">SMILES</td>
+<td class="org-left">smiles</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">SPICE</td>
+<td class="org-left">spice</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">SQL</td>
+<td class="org-left">sql</td>
+<td class="org-left">ob-doc-sql</td>
+<td class="org-left">Daniel Kraus</td>
+</tr>
+
+<tr>
+<td class="org-left">SQLite</td>
+<td class="org-left">sqlite</td>
+<td class="org-left">ob-doc-sqlite</td>
+<td class="org-left">Nick Savage</td>
+</tr>
+
+<tr>
+<td class="org-left">Sass</td>
+<td class="org-left">sass</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Scheme</td>
+<td class="org-left">scheme</td>
+<td class="org-left">ob-doc-scheme</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Shen</td>
+<td class="org-left">shen</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Stan</td>
+<td class="org-left">stan</td>
+<td class="org-left">ob-doc-stan</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Stata</td>
+<td class="org-left">stata</td>
+<td class="org-left">ob-doc-stata</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">SuperCollider</td>
+<td class="org-left">sclang</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Tcl</td>
+<td class="org-left">tcl</td>
+<td class="org-left">ob-doc-tcl</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Vala</td>
+<td class="org-left">vala</td>
+<td class="org-left">ob-doc-vala</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">abc</td>
+<td class="org-left">abc</td>
+<td class="org-left">ob-doc-abc</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">ditaa</td>
+<td class="org-left">ditaa</td>
+<td class="org-left">ob-doc-ditaa</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">ebnf2ps</td>
+<td class="org-left">ebnf</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">hledger</td>
+<td class="org-left">hledger</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">io</td>
+<td class="org-left">io</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">ledger</td>
+<td class="org-left">ledger</td>
+<td class="org-left">ob-doc-ledger</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">ΕΥΚΛΕΙΔΗΣ</td>
+<td class="org-left">eukleides</td>
+<td class="org-left">ob-doc-eukleides</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Vincent De Comarmond</p>
-<p class="date">Created: 2024-05-05 Sun 22:14</p>
+<p class="date">Created: 2024-05-06 Mon 08:24</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
